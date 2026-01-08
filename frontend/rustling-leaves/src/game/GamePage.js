@@ -25,7 +25,6 @@ export default function GamePage() {
                 setGameId(data.gameId)
                 setPlayerName(data.members.find(m => m.playerId === playerId)?.name)
             })
-            .catch(console.error);
     }, [lobbyId, playerId]);
 
     if(playerId === undefined) {

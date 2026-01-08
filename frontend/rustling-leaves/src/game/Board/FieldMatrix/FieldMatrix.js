@@ -67,7 +67,7 @@ export default function FieldMatrix({ board, onCellClick, areas, pendingRectangl
                             {row.map((field, colIndex) => (
                                 <td key={colIndex} className={computeClassesForCell(field, rowIndex, colIndex)}
                                     style={{backgroundImage: `url("${process.env.PUBLIC_URL}/field-types/${field.type.enumName.toLocaleLowerCase()}.jpg")`}}
-                                    onClick={(e) => onCellClick(e, rowIndex, colIndex)}>
+                                    onClick={(e) => onCellClick({y: rowIndex, x: colIndex})}>
                                     {field.isTicked ? "X" : ""}
                                 </td>
                             ))}
