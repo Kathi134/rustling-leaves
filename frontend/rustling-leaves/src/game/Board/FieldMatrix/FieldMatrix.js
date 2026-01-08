@@ -1,13 +1,8 @@
 import "./field-matrix.css"
 import { containsPoint } from "../../../shared/model/areaUtils";
-import { useEffect } from "react";
 
 
 export default function FieldMatrix({ board, onCellClick, areas, pendingRectangle, pendingRectangleAllowed, tickedPoints }) {
-
-    useEffect(() => {
-        console.log(tickedPoints)
-    }, [tickedPoints]);
 
     const getCellBorder = (y, x, inArea) => {
         if (!inArea) return undefined;

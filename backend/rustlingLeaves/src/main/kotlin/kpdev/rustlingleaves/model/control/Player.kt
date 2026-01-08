@@ -2,7 +2,6 @@ package kpdev.rustlingleaves.model.control
 
 import jakarta.persistence.*
 import kpdev.rustlingleaves.model.control.dice.DiceEvent
-import kpdev.rustlingleaves.model.control.dice.DiceResult
 import kpdev.rustlingleaves.model.control.dice.PairedDiceResult
 import kpdev.rustlingleaves.model.move.scoring.ScoringContext
 import kpdev.rustlingleaves.model.skeleton.FieldType

@@ -12,7 +12,6 @@ export default function DiceComponent({ gameId, roundId=0, onDiceRolled }) {
             return
         rollDiceForRound(gameId, round).then(x => {
             setDice(x);
-            console.log([x.green, x.white])
             onDiceRolled([x.green, x.white]);
         });
     }, [gameId, round, onDiceRolled]);

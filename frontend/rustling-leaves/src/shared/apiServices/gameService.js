@@ -10,9 +10,10 @@ export async function getPlayerCard(gameId, playerId) {
 
 export async function rollDiceForRound(gameId, roundId) {
     return fetch(`${API_URL}/games/${gameId}/rounds/${roundId}/dice`, {
-        method: "PUT",
-        headers: { "Accept": "application/json" }
-    }).then(r => r.json());
+            method: "PUT",
+            headers: { "Accept": "application/json" }
+        })
+        .then(r => r.json());
 }
 
 
@@ -23,13 +24,14 @@ export async function isAreaValid(gameId, playerId, topLeft, bottomRight) {
     };
 
     return fetch(`${API_URL}/games/${gameId}/players/${playerId}/areas/valid`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        },
-        body: JSON.stringify(body)
-    }).then(r => r.json());
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(body)
+        })
+        .then(r => r.json());
 }
 
 export async function getTickableFieldTypes(gameId, playerId, topLeft, bottomRight) {
@@ -39,13 +41,14 @@ export async function getTickableFieldTypes(gameId, playerId, topLeft, bottomRig
     };
 
     return fetch(`${API_URL}/games/${gameId}/players/${playerId}/areas/tickable-types`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        },
-        body: JSON.stringify(body)
-    }).then(r => r.json());
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(body)
+        })
+        .then(r => r.json());
 }
 
 export async function getPointsOfTypeInArea(gameId, playerId, rectangle, type) {
@@ -64,7 +67,6 @@ export async function getPointsOfTypeInArea(gameId, playerId, rectangle, type) {
             body: JSON.stringify(body)
         })
         .then(r => r.json())
-        .then(x => {console.log(x); return x;});
 }
 
 
@@ -81,13 +83,14 @@ export async function storePlayerMove(gameId, playerId, roundId, topLeft, bottom
     };
 
     return fetch(`${API_URL}/games/${gameId}/players/${playerId}/moves`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        },
-        body: JSON.stringify(body)
-    }).then(r => r.json());
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(body)
+        })
+        .then(r => r.json());
 }
 
 
@@ -99,13 +102,14 @@ export async function quitGame(gameId, playerId, roundId) {
     };
 
     return fetch(`${API_URL}/games/${gameId}/players/${playerId}/stop`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        },
-        body: JSON.stringify(body)
-    }).then(r => r.json());
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(body)
+        })
+        .then(r => r.json());
 }
 
 
