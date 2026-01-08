@@ -7,30 +7,14 @@ import DrawRectangle from "./Board/FieldMatrix/DrawRectangle";
 import TickType from "./Board/FieldMatrix/TickType";
 import { equals, createAreaFromTopLeftAndDimensions, containsPoint } from "../shared/model/areaUtils";
 import { getEnumTypeFromPoint } from "../shared/model/boardUtils";
+import { useReducer } from "react";
+import { actions, actionReducer, events } from "./Board/FieldMatrix/action-utils";
 
-const actions = {
-    draw: "draw",
-    tick: "tick",
-    confirm: "confirm",
-    wait: "wait"
-}
-
-// const ACTIONS = {
-//     draw: {
-//         name: "draw",
-//         onCellClick: handleCellClickInDrawState,
-//         onOutsideAreaClick: handleCellClickInDrawState
-//     },
-//     tick: {
-//         name: "tick",
-//         onCellClick: handleCellClickInTickState,
-//         onOutsideAreaClick: handleCellClickInDrawState
-//     }
-// }
 
 export default function PlayerComponent({ playerId, playerName, gameId, diceResults }) {
     const [card, setCard] = useState();
-    const [expectedAction, setExpectedAction] = useState(actions.draw);
+    const [action, dispatchAction] = useReducer(actionReducer, actions.DRAW);
+
 
     useEffect(() => {
         if(gameId === undefined || playerId === undefined) 
@@ -49,12 +33,24 @@ export default function PlayerComponent({ playerId, playerName, gameId, diceResu
     const [pendingRectangleAllowed, setPendingRectangleAllowed] = useState(true);
     const [hints, setHints] = useState("");
 
+        /* ticking */
+    const [allowedTypes, setAllowedTypes] = useState();
+    const [tickedType, setTickedType] = useState();
+    const [tickedPoints, setTickedPoints] = useState([]);
+    const [tickError, setTickError] = useState(false)
+
+    const unsetTickedType = useCallback(() => {
+        setTickedType(undefined)
+        setTickedPoints([])
+    }, [setTickedType, setTickedPoints])
+
+
     const onPendingRectangleChange = useCallback((updateValue) => {
         if(equals(pendingRectangle, updateValue))
             return;
         setPendingRectangle(updateValue);
 
-        if(expectedAction === actions.tick) {
+        if(action === actions.TICK) {
             setTickedType(undefined);
         }
 
@@ -65,41 +61,39 @@ export default function PlayerComponent({ playerId, playerName, gameId, diceResu
                     setPendingRectangleAllowed(true);
                     getTickableFieldTypes(gameId, playerId, updateValue.topLeft, updateValue.bottomRight)
                         .then(setAllowedTypes)
-                        .then(() => setExpectedAction(actions.tick));
+                        .then(() => dispatchAction(events.AREA_VALID));
                 } else {
-                    setExpectedAction(actions.draw);
+                    dispatchAction(events.AREA_INVALID);
                     setHints(isValid)
                     setPendingRectangleAllowed(false);
                 }
             });   
-    }, [pendingRectangle, expectedAction, gameId, playerId]);
+    }, [pendingRectangle, action, gameId, playerId]);
 
     const handleCellClickInDrawState = useCallback((_, rowIndex, colIndex) => {
         if(card?.boardTemplate === undefined || diceValues === undefined)
             return;
 
+        unsetTickedType();
         const point = {x: colIndex, y: rowIndex};
         const area = createAreaFromTopLeftAndDimensions(point, card?.boardTemplate, diceValues);
 
         onPendingRectangleChange(area)
-    }, [card, diceValues, onPendingRectangleChange]);    
+    }, [card, diceValues, onPendingRectangleChange, unsetTickedType]);    
 
    
     const onOutsideAreaClick = useMemo(() => {
-        if(expectedAction === actions.tick)
+        if(action === actions.TICK || action === actions.CONFIRM)
             return handleCellClickInDrawState
-    }, [expectedAction, handleCellClickInDrawState]);
+    }, [action, handleCellClickInDrawState]);
 
-    /* ticking */
-    const [allowedTypes, setAllowedTypes] = useState();
-    const [tickedType, setTickedType] = useState();
-    const [tickedPoints, setTickedPoints] = useState([]);
-    const [tickError, setTickError] = useState(false)
 
+
+
+   
     const handleCellClickInTickState = useCallback((_, rowIndex, colIndex) => {
         if(card?.boardTemplate === undefined || allowedTypes === undefined)
             return;
-        
         
         const point = {x: colIndex, y: rowIndex};
         if(!containsPoint(pendingRectangle, point)) {
@@ -110,27 +104,25 @@ export default function PlayerComponent({ playerId, playerName, gameId, diceResu
         const type = getEnumTypeFromPoint(card?.boardTemplate, point);
 
         if(!allowedTypes.some(x => x.enumName === type)) {
+            dispatchAction(events.TYPE_INVALID)
+            unsetTickedType();
             setTickError(true);
-            setTickedType(undefined);
-            setTickedPoints([]);
         } else {
             setTickError(false);
             setTickedType(type);
             getPointsOfTypeInArea(gameId, playerId, pendingRectangle, type)
                 .then(setTickedPoints)
-                .then(() => setExpectedAction(actions.confirm))
+                .then(() => dispatchAction(events.TYPE_VALID))
         }
-    }, [allowedTypes, card, gameId, onOutsideAreaClick, pendingRectangle, playerId]);
-        
-        // TODO: BUG: somehow frontend sends endless requests
-        // TODO: BUG: sometimes tick doesnt work: gets set, works but then gets unset with [] again
+    }, [allowedTypes, card, gameId, onOutsideAreaClick, pendingRectangle, playerId, unsetTickedType]);
+
 
     const onCellClick = useMemo(() => {
-        if(expectedAction === actions.draw) 
+        if(action === actions.DRAW) 
             return handleCellClickInDrawState
-        if(expectedAction === actions.tick)
+        if(action === actions.TICK || action === actions.CONFIRM)
             return handleCellClickInTickState
-    }, [expectedAction, handleCellClickInDrawState, handleCellClickInTickState]);
+    }, [action, handleCellClickInDrawState, handleCellClickInTickState]);
 
     
 
@@ -138,15 +130,15 @@ export default function PlayerComponent({ playerId, playerName, gameId, diceResu
         <div className="vertical-container center">
             <h3>{playerName}s Spiel-Karte</h3>
             <div>
-                {expectedAction === actions.draw  
+                {action === actions.DRAW  
                     ? <DrawRectangle expectedRectangleDims={diceValues} hints={hints} allowed={pendingRectangleAllowed} />
-                : expectedAction === actions.tick   
+                : action === actions.TICK   
                     ? <TickType tickError={tickError}/>
-                : expectedAction === actions.confirm
+                : action === actions.CONFIRM
                     ? <span>Bestätige deine Auswahl des Typs: {tickedType}</span>
-                : expectedAction === actions.wait
+                : action === actions.WAIT
                     ? <span>Warte auf die anderen Spieler für die nächste Runde!</span>
-                : <span>Unbekannte Aktion {expectedAction}</span>}
+                : <span>Unbekannte Aktion {action}</span>}
             </div>
 
             {card &&  <>
