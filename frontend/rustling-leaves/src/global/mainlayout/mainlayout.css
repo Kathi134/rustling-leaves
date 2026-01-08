@@ -1,0 +1,39 @@
+header {
+    position: fixed;
+    top: 0;
+    flex: 0 1 auto;
+    z-index: 1;
+    background-color: var(--default-light);
+    display: flex;
+    justify-content: center;
+    /* padding: 0rem 2rem; */
+    width: 100%;
+}
+
+main {
+    flex: 1 1 auto;
+    position: relative;
+    padding: 1rem;
+}
+
+#children-container {
+    margin-bottom: 4rem;
+}
+
+footer {
+    background-color: var(--default-light);
+    padding: 0.3rem 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 2;
+}
+
+a {
+    all: unset;
+}
+
+.logo {
+    color: var(--primary-highlight);
+    background-color: var(--secondary-highlight);
+}

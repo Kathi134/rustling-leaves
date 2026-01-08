@@ -1,0 +1,98 @@
+@gameId = b63c9601-13fd-40d8-a042-7b6dd1bbb872
+@playerId = 042085b1-3eca-4e18-b91c-0e4f9decc0f2
+@roundId = 0
+
+### ----------------------------------------
+### Roll dice for a round
+### ----------------------------------------
+PUT http://localhost:8010/games/{{gameId}}/rounds/{{roundId}}/dice
+Accept: application/json
+
+###
+
+### ----------------------------------------
+### Check if an area is valid for a player
+### NOTE: GET with request body (unusual but supported by Spring)
+### ----------------------------------------
+POST http://localhost:8010/games/{{gameId}}/players/{{playerId}}/areas/valid
+Content-Type: application/json
+Accept: application/json
+
+{
+    "topLeft": {
+      "x": 0,
+      "y": 5
+    },
+    "bottomRight": {
+      "x": 1,
+      "y": 6
+    }
+}
+
+###
+
+### ----------------------------------------
+### Get tickable field types on an area
+### ----------------------------------------
+GET http://localhost:8010/games/{{gameId}}/players/{{playerId}}/areas/tickable-types
+Content-Type: application/json
+Accept: application/json
+
+{
+  "topLeft": {
+    "x": 0,
+    "y": 5
+  },
+  "bottomRight": {
+    "x": 1,
+    "y": 6
+  }
+}
+
+###
+
+### ----------------------------------------
+### Store a move for a player
+### ----------------------------------------
+POST http://localhost:8010/games/{{gameId}}/players/{{playerId}}/moves
+Content-Type: application/json
+Accept: application/json
+
+{
+  "roundId": {{roundId}},
+  "rectangle": {
+    "topLeft": {
+      "x": 0,
+      "y": 5
+    },
+    "bottomRight": {
+      "x": 1,
+      "y": 6
+    }
+  },
+  "type": {
+    "enumName": "BIRD_LEFT"
+  }
+}
+
+###
+
+### ----------------------------------------
+### get the playercard for a player
+### ----------------------------------------
+GET http://localhost:8010/games/{{gameId}}/players/{{playerId}}/card
+Accept: application/json
+
+###
+
+### ----------------------------------------
+### Quit game for a player
+### ----------------------------------------
+POST http://localhost:8010/games/{{gameId}}/players/{{playerId}}/stop
+Content-Type: application/json
+Accept: application/json
+
+{
+  "roundId": 0
+}
+

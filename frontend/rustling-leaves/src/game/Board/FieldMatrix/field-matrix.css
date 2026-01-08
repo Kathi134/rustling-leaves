@@ -1,0 +1,75 @@
+.field-cell {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.field-cell.ticked::after {
+    content: "✖";
+    position: absolute;
+    top: 10%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    color: var(--primary-highlight);
+    pointer-events: none;
+    opacity: 0.9;
+    background: transparent;
+}
+.included.ticked::after {
+    color: var(--dark-highlight);
+}
+.highlighted.ticked::after {
+    color: var(--primary-highlight);
+}
+
+/* backend stored rectangles */
+.included {
+    position: relative;
+}
+.included::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--dark-highlight);
+    pointer-events: none;
+}
+.included.border-top { border-top: 2px solid var(--dark-highlight); }
+.included.border-bottom { border-bottom: 2px solid var(--dark-highlight); }
+.included.border-left { border-left: 2px solid var(--dark-highlight); }
+.included.border-right { border-right: 2px solid var(--dark-highlight); }
+
+/* currently drawn rectangle */
+.highlighted {
+    position: relative;
+}
+.highlighted::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--primary-highlight); 
+    opacity: 0.5;
+    pointer-events: none;
+}
+.highlighted.border-top { border-top: 2px solid var(--primary-highlight); }
+.highlighted.border-bottom { border-bottom: 2px solid var(--primary-highlight); }
+.highlighted.border-left { border-left: 2px solid var(--primary-highlight); }
+.highlighted.border-right { border-right: 2px solid var(--primary-highlight); }
+
+.highlighted.not-allowed::after { background-color: var(--secondary-highlight); }
+.highlighted.not-allowed.border-top { border-top: 2px solid var(--secondary-highlight); }
+.highlighted.not-allowed.border-bottom { border-bottom: 2px solid var(--secondary-highlight); }
+.highlighted.not-allowed.border-left { border-left: 2px solid var(--secondary-highlight); }
+.highlighted.not-allowed.border-right { border-right: 2px solid var(--secondary-highlight); }
+
+
+/* river borders */
+.river-right {
+    border-right: 0.5rem solid rgb(128, 204, 230);;
+}
+
+.river-bottom {
+    border-bottom: 0.5rem solid rgb(128, 204, 230);
+}

@@ -1,0 +1,37 @@
+.toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--default-light);
+    border-radius: 2rem;
+    padding: 1rem 5px;
+    position: relative;
+}
+
+.toggle-container input[type="radio"] {
+    display: none;
+}
+
+.toggle-container label {
+    flex: 1;
+    text-align: center;
+    padding: 0.6rem 0.9rem;
+    border-radius: 2rem;
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.8s ease;
+}
+
+.toggle-container .active {
+    background: var(--secondary-highlight-light);
+    color: var(--default-light);
+}
+
+.toggle-container label:not(.active) {
+    color: var(--secondary-highlight-light);
+}
+
+.toggle-container input[type="radio"]:checked + label {
+    color: var(--default-light);
+    z-index: 1;
+}

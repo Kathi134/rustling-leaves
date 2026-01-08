@@ -1,0 +1,350 @@
+body {
+  margin: 0;
+  padding: 0rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  background-color: var(--base);
+  color: var(--default);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+
+/* Überschriften */
+h1, h2, h3, h4 {
+  text-align: center;
+}
+h1 { color: var(--primary-highlight); }
+h2 { color: var(--secondary-highlight); }
+h3 { color: var(--primary-highlight-light); }
+h3 { color: var(--secondary-highlight-light); }
+
+
+
+/* Marks */
+.marked.secondary {
+  color: var(--secondary-highlight);
+  font-weight: bold;
+}
+
+.marked.primary {
+  font-weight: bold;
+  color: var(--primary-highlight);
+}
+
+.marked.secondary-light {
+  color: var(--secondary-highlight-light);
+  font-weight: bold;
+}
+
+.marked.primary-light {
+  font-weight: bold;
+  color: var(--primary-highlight-light);
+}
+
+.error {
+  color: var(--error);
+}
+
+.glow {
+  text-shadow: 2px 0 0.5rem;
+}
+.glow.primary {
+  color: var(--primary-highlight);
+}
+.glow.primary-light {
+  color: var(--primary-highlight-light);
+}
+.glow.secondary {
+  color: var(--secondary-highlight);
+}
+.glow.secondary-light {
+  color: var(--secondary-highlight-light);
+}
+
+
+
+
+
+/* Buttons */
+button, .button {
+  background: var(--primary-highlight-light);
+  border: none;
+  border-radius: 25px;
+  color: var(--default-light);
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: var(--primary-highlight);
+}
+
+button.small, .button.small {
+  background-color: var(--secondary-highlight-light);
+  padding: 0.25rem 0.5rem;
+}
+
+button.small:hover, .button.small:hover {
+  background-color: var(--secondary-highlight);
+}
+
+button.unset {
+  all: unset;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: background 0.3s ease;
+}
+
+button.unset.primary:hover { background-color: var(--primary-highlight-light); }
+button.unset.secondary:hover { background-color: var(--secondary-highlight-light); }
+
+button:disabled, .button:disabled {
+  background-color: var(--default-light);
+  color: var(--base);
+}
+
+button:disabled:hover, .button:disabled:hover {
+  cursor: auto;
+}
+
+
+/* Links */
+a, .a {
+  color: var(--primary-highlight-light);
+  text-decoration: none;
+}
+
+a:hover, .a:hover {
+  color: var(--primary-highlight);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+a.unset, .a.unset {
+  color: var(--default);
+  text-decoration: none;
+}
+
+a.unset:hover, .a.unset:hover {
+  color: var(--default);
+  text-decoration: none;
+}
+
+
+/* input */
+.decent-input {
+    background-color: var(--default-light);
+    color: var(--default);
+    font-size: unset; 
+    font-weight: unset;
+    font-family: unset;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    width: unset;
+}
+
+.decent-input:focus-visible {  
+  outline: none;
+  box-shadow: none;
+}
+
+.decent-input.h2 {  
+    color: var(--secondary-highlight-light);
+    background: var(--default-light);
+    border: 0.15rem solid var(--secondary-highlight-light);
+}
+
+.decent-input.h2:focus-visible {  
+    border: 0.15rem solid var(--secondary-highlight);
+}
+
+.decent-input.marked {  
+    color: var(--primary-highlight);
+    background: var(--default-light);
+    border: 0.15rem solid var(--primary-highlight-light);
+}
+
+.decent-input.marked:focus-visible {  
+    border: 0.15rem solid var(--primary-highlight);
+}
+
+.decent-input.primary { border: 0.1rem solid var(--primary-highlight-light); }
+.decent-input.primary:focus-visible { border: 0.15rem solid var(--primary-highlight); }
+
+.decent-input.secondary { border: 0.1rem solid var(--secondary-highlight-light); }
+.decent-input.secondary:focus-visible { border: 0.15rem solid var(--secondary-highlight); }
+
+input:invalid {
+  border-color: var(--error);
+}
+
+input[type="radio"] {
+  display: none;
+}
+
+.kp-radio {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--default);
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.kp-radio::after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  background-color: var(--primary-highlight); /* Your custom color */
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.2s ease-in-out;
+}
+
+input[type="radio"]:checked + .kp-radio-radio::after {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Number input styling following your scheme */
+.decent-input[type="number"], .decent-input-number {
+    width: 1.5rem; /* adjust as needed; keeps the input compact */
+}
+
+.decent-input[type="number"]::-webkit-outer-spin-button, 
+.decent-input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.decent-input[type="number"] {
+    -moz-appearance: textfield; /* Firefox */
+}
+
+label.left {
+  text-align: left;
+  margin-left: 0.5rem;
+}
+
+
+/* table */
+.table-wrap {
+  border: 2px solid var(--default-light); /* outer border color */
+  border-radius: 0.75rem;                 /* same radius as before */
+  overflow: hidden;                       /* ensures rounded corners clip contents */
+  background: var(--default-light);       /* keeps same bg as table */
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;  /* IMPORTANT: must be separate to get rounded border */
+  border-spacing: 0;         /* removes extra gaps */
+  border: 0.1rem solid var(--primary-highlight);
+  background: var(--default-light);
+  color: var(--default);
+  border-radius: 0.75rem;
+  overflow: hidden; /* keeps rounded corners */
+  margin: 1rem 0;
+  font-size: 0.95rem;
+}
+
+table thead {
+  background: var(--primary-highlight-light);
+  color: var(--default-light);
+}
+
+table thead th {
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  text-align: left;
+  border-bottom: 2px solid var(--primary-highlight);
+}
+
+table tbody tr {
+  transition: background 0.25s ease;
+}
+
+table tbody tr:nth-child(even) {
+  background: var(--base);
+}
+
+table.hoverable tbody td:hover {
+  cursor: pointer;
+  background: var(--primary-highlight-light);
+  color: var(--default-light);
+}
+
+table th {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--default-light);
+}
+
+table.compact th {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.85rem;
+}
+
+tr.marked,
+table tbody tr.marked:nth-child(even) {
+  background: var(--secondary-highlight-light);
+  color: var(--default-light);
+}
+
+tr.marked:hover,
+table tbody tr.marked:hover:nth-child(even) {
+  background: var(--secondary-highlight);
+}
+
+tr.marked .glow {
+  color: var(--default-light);
+}
+
+
+table td.right-border {
+  border-right: 0.1rem solid var(--primary-highlight);
+}
+
+
+/* dialog */
+dialog {
+  position: fixed;
+  background-color: var(--base);
+  color: var(--default);
+  font-size: 1rem;
+  border-radius: 0;
+  padding: 1rem;
+  border-radius: 0.25rem;
+  border: 0px;
+  width: 70%;
+  z-index: 3;
+  top: 30%;
+  box-shadow: 0 0 1rem 1rem var(--default-light);
+}
+  
+dialog::backdrop {
+  backdrop-filter: blur(0.15rem);
+}
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(0.15rem);
+  z-index: 2;
+  background-color: var(--default-light-transparent);
+}

@@ -1,0 +1,13 @@
+img.marked {
+    border: 0.2rem solid var(--primary-highlight);
+    transform: scale(1);
+}
+
+img.hoverable:hover{
+    cursor: pointer;
+}
+
+img {
+    transform: scale(0.92);
+    border-radius: 0.1rem;
+}

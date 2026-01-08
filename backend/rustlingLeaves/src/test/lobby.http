@@ -1,0 +1,84 @@
+@lobbyId = 00e91e7d-ccb3-4984-913c-6fbec0437ce2
+@code = c4021ea4
+@memberId = 7e342b70-d083-4f1a-ada0-8181fb21f237
+@bobId = 77c3bfb8-2798-4e8f-81ac-c05cf03ae7c3
+
+
+### ----------------------------------------
+### List all lobbies
+### ----------------------------------------
+GET http://localhost:8010/lobbies
+Accept: application/json
+
+###
+
+### ----------------------------------------
+### Create a lobby
+### ----------------------------------------
+POST http://localhost:8010/lobbies
+Content-Type: application/json
+Accept: application/json
+
+{
+  "content": "New Test Lobby"
+}
+
+###
+
+### ----------------------------------------
+### Get lobby by ID
+### ----------------------------------------
+GET http://localhost:8010/lobbies/{{lobbyId}}
+Accept: application/json
+
+###
+
+### ----------------------------------------
+### Join lobby
+### ----------------------------------------
+POST http://localhost:8010/lobbies/{{lobbyId}}/members
+Content-Type: application/json
+Accept: application/json
+
+{
+  "lobbyCode": "{{code}}",
+  "playerName": "Bob"
+}
+
+###
+
+### ----------------------------------------
+### Leave lobby
+### ----------------------------------------
+DELETE http://localhost:8010/lobbies/{{lobbyId}}/members/{{memberId}}
+Accept: application/json
+
+
+###
+
+### ----------------------------------------
+### Start lobby (set status + game config)
+### ----------------------------------------
+PUT http://localhost:8010/lobbies/{{lobbyId}}/status
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "memberId": "{{memberId}}",
+    "season": "SPRING",
+    "startingPoint": {
+      "x": 2,
+      "y": 3
+    }
+  },
+  {
+    "memberId": "{{bobId}}",
+    "season": "SPRING",
+    "startingPoint": {
+      "x": 6,
+      "y": 1
+    }
+  }
+]
+

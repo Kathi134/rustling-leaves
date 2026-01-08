@@ -1,0 +1,11 @@
+st:START_LEAF,t:TREE_SPRING,bee:BEE,f:FLOWER,bu:BUTTERFLY,bl:BIRD_LEFT,br:BIRD_RIGHT,r:RAINBOW,s:SEED,bea:BEAR
+bea,t,bu,br,f,t,bl,t,bu,r
+f,st,r,t,t,s,bee,f,st,br
+t,s,bee,bu,bu,bee,t,r,t,t
+br,bu,f,br,bl,t,bu,bee,t,bea
+s,t,st,t,f,bea,t,t,bl,f
+t,r,t,f,bu,t,s,st,t,bl
+t,bl,t,bl,t,f,bea,t,t,r
+r,bu,bee,f,s,t,f,br,bu,s
+bee,st,br,t,bee,r,bu,t,st,f
+bea,t,bu,t,bea,f,bu,t,t,bee

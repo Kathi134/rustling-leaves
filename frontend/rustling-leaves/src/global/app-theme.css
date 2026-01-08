@@ -1,0 +1,13 @@
+:root {
+  --default: #161c2a;
+  --default-light: white;
+  --default-light-transparent: rgba(255, 255, 255, 0.438);
+  --primary-highlight: #37544a;
+  --primary-highlight-light: #6a7156;
+  --secondary-highlight: #7f342a;
+  --secondary-highlight-light: #cb736a;
+  --dark-highlight: #0f131b;
+  --dark-highlight-light: #262b36;
+  --base: #f4e3b5;
+  --error: #ff4343;
+}
