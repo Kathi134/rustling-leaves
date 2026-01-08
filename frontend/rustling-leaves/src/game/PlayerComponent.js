@@ -5,8 +5,8 @@ import ScoringTags from "./Board/ScoringTags/ScoringTags";
 import { getOptionValue } from "../shared/model/diceUtils";
 import DrawRectangle from "./Board/FieldMatrix/DrawRectangle";
 import TickType from "./Board/FieldMatrix/TickType";
-import { equals } from "../shared/model/areaUtils";
-
+import { equals, createAreaFromTopLeftAndDimensions, containsPoint } from "../shared/model/areaUtils";
+import { getEnumTypeFromPoint } from "../shared/model/boardUtils";
 
 const actions = {
     draw: "draw",
@@ -15,15 +15,31 @@ const actions = {
     wait: "wait"
 }
 
+// const ACTIONS = {
+//     draw: {
+//         name: "draw",
+//         onCellClick: handleCellClickInDrawState,
+//         onOutsideAreaClick: handleCellClickInDrawState
+//     },
+//     tick: {
+//         name: "tick",
+//         onCellClick: handleCellClickInTickState,
+//         onOutsideAreaClick: handleCellClickInDrawState
+//     }
+// }
+
 export default function PlayerComponent({ playerId, playerName, gameId, diceResults }) {
     const [card, setCard] = useState();
     const [expectedAction, setExpectedAction] = useState(actions.draw);
 
-    const [onCellClick, setOnCellClick] = useState(() => {});
-    const [onOutsideAreaClick, setOnOutsideAreaClick] = useState(() => {});
+    useEffect(() => {
+        if(gameId === undefined || playerId === undefined) 
+            return
+        getPlayerCard(gameId, playerId).then(setCard)
+    }, [gameId, playerId])
 
 
-    // drawing related states
+    /* drawing */
     const diceValues = useMemo(() => {
         if(diceResults)
             return diceResults?.map(getOptionValue);
@@ -33,48 +49,22 @@ export default function PlayerComponent({ playerId, playerName, gameId, diceResu
     const [pendingRectangleAllowed, setPendingRectangleAllowed] = useState(true);
     const [hints, setHints] = useState("");
 
-    // ticking related states
-    const [allowedTypes, setAllowedTypes] = useState();
-    const [tickedType, setTickedType] = useState();
-    const [tickedPoints, setTickedPoints] = useState([]);
-    
-
-    useEffect(() => {
-        if(gameId === undefined || playerId === undefined) 
-            return
-        getPlayerCard(gameId, playerId).then(setCard)
-    }, [gameId, playerId])
-
-
     const onPendingRectangleChange = useCallback((updateValue) => {
         if(equals(pendingRectangle, updateValue))
             return;
         setPendingRectangle(updateValue);
-    }, [pendingRectangle]);
 
-    // on drawn rectangle change
-    useEffect(() => {
-        if(pendingRectangle === undefined)
-            return
-
-        console.log("gicht")
         if(expectedAction === actions.tick) {
             setTickedType(undefined);
         }
 
-        // BUG happens all the time!!!
-        isAreaValid(gameId, playerId, pendingRectangle.topLeft, pendingRectangle.bottomRight)
+        isAreaValid(gameId, playerId, updateValue.topLeft, updateValue.bottomRight)
             .then(isValid => {
                 if (isValid === true) {
                     setHints([]);
                     setPendingRectangleAllowed(true);
-                    getTickableFieldTypes(gameId, playerId, pendingRectangle.topLeft, pendingRectangle.bottomRight)
+                    getTickableFieldTypes(gameId, playerId, updateValue.topLeft, updateValue.bottomRight)
                         .then(setAllowedTypes)
-                        .then(() => {
-                            if(expectedAction === actions.draw) {
-                                setOnOutsideAreaClick(() => onCellClick)
-                            }
-                        })
                         .then(() => setExpectedAction(actions.tick));
                 } else {
                     setExpectedAction(actions.draw);
@@ -82,33 +72,76 @@ export default function PlayerComponent({ playerId, playerName, gameId, diceResu
                     setPendingRectangleAllowed(false);
                 }
             });   
-    }, [pendingRectangle, expectedAction, gameId, playerId, setOnCellClick, setExpectedAction, onCellClick, setOnOutsideAreaClick]);
+    }, [pendingRectangle, expectedAction, gameId, playerId]);
 
-    // on ticked type change
-    useEffect(() => {
-        if(tickedType === undefined) {
-            setTickedPoints([]);
-            return
+    const handleCellClickInDrawState = useCallback((_, rowIndex, colIndex) => {
+        if(card?.boardTemplate === undefined || diceValues === undefined)
+            return;
+
+        const point = {x: colIndex, y: rowIndex};
+        const area = createAreaFromTopLeftAndDimensions(point, card?.boardTemplate, diceValues);
+
+        onPendingRectangleChange(area)
+    }, [card, diceValues, onPendingRectangleChange]);    
+
+   
+    const onOutsideAreaClick = useMemo(() => {
+        if(expectedAction === actions.tick)
+            return handleCellClickInDrawState
+    }, [expectedAction, handleCellClickInDrawState]);
+
+    /* ticking */
+    const [allowedTypes, setAllowedTypes] = useState();
+    const [tickedType, setTickedType] = useState();
+    const [tickedPoints, setTickedPoints] = useState([]);
+    const [tickError, setTickError] = useState(false)
+
+    const handleCellClickInTickState = useCallback((_, rowIndex, colIndex) => {
+        if(card?.boardTemplate === undefined || allowedTypes === undefined)
+            return;
+        
+        
+        const point = {x: colIndex, y: rowIndex};
+        if(!containsPoint(pendingRectangle, point)) {
+            onOutsideAreaClick(_, rowIndex, colIndex);
+            return;
         }
-        getPointsOfTypeInArea(gameId, playerId, pendingRectangle, tickedType)
-            .then(setTickedPoints)
-            .then(() => setExpectedAction(actions.confirm))
+        
+        const type = getEnumTypeFromPoint(card?.boardTemplate, point);
+
+        if(!allowedTypes.some(x => x.enumName === type)) {
+            setTickError(true);
+            setTickedType(undefined);
+            setTickedPoints([]);
+        } else {
+            setTickError(false);
+            setTickedType(type);
+            getPointsOfTypeInArea(gameId, playerId, pendingRectangle, type)
+                .then(setTickedPoints)
+                .then(() => setExpectedAction(actions.confirm))
+        }
+    }, [allowedTypes, card, gameId, onOutsideAreaClick, pendingRectangle, playerId]);
         
         // TODO: BUG: somehow frontend sends endless requests
         // TODO: BUG: sometimes tick doesnt work: gets set, works but then gets unset with [] again
-    }, [tickedType, pendingRectangle, gameId, playerId]);
 
+    const onCellClick = useMemo(() => {
+        if(expectedAction === actions.draw) 
+            return handleCellClickInDrawState
+        if(expectedAction === actions.tick)
+            return handleCellClickInTickState
+    }, [expectedAction, handleCellClickInDrawState, handleCellClickInTickState]);
+
+    
 
     return (
         <div className="vertical-container center">
             <h3>{playerName}s Spiel-Karte</h3>
             <div>
                 {expectedAction === actions.draw  
-                    ? <DrawRectangle setOnClick={setOnCellClick} onResult={onPendingRectangleChange} expectedRectangleDims={diceValues} board={card?.boardTemplate} 
-                        hints={hints} allowed={pendingRectangleAllowed} />
+                    ? <DrawRectangle expectedRectangleDims={diceValues} hints={hints} allowed={pendingRectangleAllowed} />
                 : expectedAction === actions.tick   
-                    ? <TickType setOnClick={setOnCellClick} onResult={setTickedType} board={card?.boardTemplate} 
-                        inArea={pendingRectangle} onOutsideAreaClick={onOutsideAreaClick} allowedTypes={allowedTypes}/>
+                    ? <TickType tickError={tickError}/>
                 : expectedAction === actions.confirm
                     ? <span>Bestätige deine Auswahl des Typs: {tickedType}</span>
                 : expectedAction === actions.wait

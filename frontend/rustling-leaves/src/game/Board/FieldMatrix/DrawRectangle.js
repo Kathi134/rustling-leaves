@@ -1,23 +1,6 @@
-import { useCallback, useEffect } from "react";
-import { convertReasonToReadable, createAreaFromTopLeftAndDimensions } from "../../../shared/model/areaUtils";
+import { convertReasonToReadable } from "../../../shared/model/areaUtils";
 
-export default function DrawRectangle({ expectedRectangleDims, setOnClick, onResult, board, hints, allowed }) {
-    const handleCellClick = useCallback((event, rowIndex, colIndex) => {
-        if(board === undefined || expectedRectangleDims === undefined)
-            return;
-
-        console.log("DrawRectangle cellHandler")
-
-        const point = {x: colIndex, y: rowIndex};
-        const area = createAreaFromTopLeftAndDimensions(point, board, expectedRectangleDims);
-
-        onResult(area)
-    }, [board, expectedRectangleDims, onResult]);
-
-    useEffect(() => {
-        setOnClick(() => handleCellClick);
-    }, [setOnClick, handleCellClick]);
-
+export default function DrawRectangle({ expectedRectangleDims, hints, allowed }) {
     return(<>
         <div>
             <span>Zeichne ein {expectedRectangleDims[0]} x {expectedRectangleDims[1]} Rechteck!</span>
