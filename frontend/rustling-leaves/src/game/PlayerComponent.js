@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, useRef } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { getPlayerCard, getTickableFieldTypes, isAreaValid, getPointsOfTypeInArea } from "../shared/apiServices/gameService";
 import FieldMatrix from "./Board/FieldMatrix/FieldMatrix";
 import ScoringTags from "./Board/ScoringTags/ScoringTags";
@@ -19,13 +19,8 @@ export default function PlayerComponent({ playerId, playerName, gameId, diceResu
     const [card, setCard] = useState();
     const [expectedAction, setExpectedAction] = useState(actions.draw);
 
-    const onCellClickRef = useRef(() => {});
-    const updateOnCellClickRef = useCallback((fn) => { onCellClickRef.current = fn }, []);
-    const onCellClick = useCallback((...args) => {console.log("foo");onCellClickRef.current(...args) }, []);
-
-    const onOutsideAreaClickRef = useRef(() => {});
-    const updateOutsideAreaClickRef = useCallback((fn) => { onOutsideAreaClickRef.current = fn }, []);
-    const onOutsideAreaClick = useCallback((...args) => {onOutsideAreaClickRef.current?.(...args) }, []);
+    const [onCellClick, setOnCellClick] = useState(() => {});
+    const [onOutsideAreaClick, setOnOutsideAreaClick] = useState(() => {});
 
 
     // drawing related states
@@ -49,11 +44,6 @@ export default function PlayerComponent({ playerId, playerName, gameId, diceResu
             return
         getPlayerCard(gameId, playerId).then(setCard)
     }, [gameId, playerId])
-
-    useEffect(() => {
-        console.log(onCellClickRef.current)
-        console.log(onOutsideAreaClickRef.current)
-    }, [onCellClickRef, onOutsideAreaClickRef]);
 
 
     const onPendingRectangleChange = useCallback((updateValue) => {
@@ -82,9 +72,7 @@ export default function PlayerComponent({ playerId, playerName, gameId, diceResu
                         .then(setAllowedTypes)
                         .then(() => {
                             if(expectedAction === actions.draw) {
-                                console.log(onCellClickRef)
-                                updateOutsideAreaClickRef(onCellClickRef.current)
-                                console.log(onOutsideAreaClickRef)
+                                setOnOutsideAreaClick(() => onCellClick)
                             }
                         })
                         .then(() => setExpectedAction(actions.tick));
@@ -94,7 +82,7 @@ export default function PlayerComponent({ playerId, playerName, gameId, diceResu
                     setPendingRectangleAllowed(false);
                 }
             });   
-    }, [pendingRectangle, expectedAction, gameId, playerId, updateOnCellClickRef, setExpectedAction, onCellClickRef, updateOutsideAreaClickRef]);
+    }, [pendingRectangle, expectedAction, gameId, playerId, setOnCellClick, setExpectedAction, onCellClick, setOnOutsideAreaClick]);
 
     // on ticked type change
     useEffect(() => {
@@ -116,10 +104,10 @@ export default function PlayerComponent({ playerId, playerName, gameId, diceResu
             <h3>{playerName}s Spiel-Karte</h3>
             <div>
                 {expectedAction === actions.draw  
-                    ? <DrawRectangle setOnClick={updateOnCellClickRef} onResult={onPendingRectangleChange} expectedRectangleDims={diceValues} board={card?.boardTemplate} 
+                    ? <DrawRectangle setOnClick={setOnCellClick} onResult={onPendingRectangleChange} expectedRectangleDims={diceValues} board={card?.boardTemplate} 
                         hints={hints} allowed={pendingRectangleAllowed} />
                 : expectedAction === actions.tick   
-                    ? <TickType setOnClick={updateOnCellClickRef} onResult={setTickedType} board={card?.boardTemplate} 
+                    ? <TickType setOnClick={setOnCellClick} onResult={setTickedType} board={card?.boardTemplate} 
                         inArea={pendingRectangle} onOutsideAreaClick={onOutsideAreaClick} allowedTypes={allowedTypes}/>
                 : expectedAction === actions.confirm
                     ? <span>Bestätige deine Auswahl des Typs: {tickedType}</span>
