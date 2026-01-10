@@ -1,8 +1,12 @@
 import "./field-matrix.css"
 import { containsPoint } from "../../../shared/model/areaUtils";
+import { useMemo } from "react";
 
 
 export default function FieldMatrix({ board, onCellClick, areas, pendingRectangle, pendingRectangleAllowed, tickedPoints }) {
+    const xDims = useMemo(() => board?.fields[0].length, [board]);
+    const yDims = useMemo(() => board?.fields.length, [board]);
+
 
     const getCellBorder = (y, x, inArea) => {
         if (!inArea) return undefined;
@@ -62,15 +66,18 @@ export default function FieldMatrix({ board, onCellClick, areas, pendingRectangl
         <div>
             <table>
                 <tbody>
-                    {board.fields.map((row, rowIndex) => (
+                    {Array.from({ length: yDims }).map((_, rowIndex) => (
                         <tr key={rowIndex}>
-                            {row.map((field, colIndex) => (
-                                <td key={colIndex} className={computeClassesForCell(field, rowIndex, colIndex)}
-                                    style={{backgroundImage: `url("${process.env.PUBLIC_URL}/field-types/${field.type.enumName.toLocaleLowerCase()}.jpg")`}}
-                                    onClick={(e) => onCellClick({y: rowIndex, x: colIndex})}>
-                                    {field.isTicked ? "X" : ""}
-                                </td>
-                            ))}
+                            {Array.from({ length: xDims }).map((_, colIndex) => {
+                                const field = board.fields[rowIndex][colIndex]
+                                return (
+                                    <td key={colIndex} className={computeClassesForCell(field, rowIndex, colIndex)}
+                                        style={{backgroundImage: `url("${process.env.PUBLIC_URL}/field-types/${field.type.enumName.toLocaleLowerCase()}.jpg")`}}
+                                        onClick={(e) => onCellClick({y: rowIndex, x: colIndex})}>
+                                        {field.isTicked ? "X" : ""}
+                                    </td>
+                                )
+                            })}
                         </tr>
                     ))}
                 </tbody>

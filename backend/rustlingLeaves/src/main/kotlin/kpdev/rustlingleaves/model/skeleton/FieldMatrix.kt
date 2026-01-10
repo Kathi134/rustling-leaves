@@ -10,6 +10,7 @@ open class Matrix<T>(
 
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "board_template_id")
+    @OrderColumn(name = "matrix_index")
     private val flatValueStream: MutableList<T> = mutableListOf(),
 ) {
     constructor(values: Collection<Collection<T>>) : this(values.size, values.first().size) {
