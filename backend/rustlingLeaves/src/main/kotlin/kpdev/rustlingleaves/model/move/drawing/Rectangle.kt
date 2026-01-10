@@ -36,7 +36,7 @@ class Rectangle(
 
     private val allCornerPoints : Set<Point>
         get() =
-            setOf(topLeft, bottomRight, Point(bottomRight.y, topLeft.x),  Point(topLeft.y, bottomRight.x))
+            setOf(topLeft, bottomRight, Point(bottomRight.x, topLeft.y),  Point(topLeft.x, bottomRight.y))
 
 
     fun isAdjacentToRectangle(rectangle: Rectangle) : Boolean {
@@ -55,8 +55,8 @@ class Rectangle(
     }
 
     fun overlapsWithArea(rectangle: Rectangle) : Boolean =
-        allCornerPoints.any{ rectangle.includes(it) }
-            || rectangle.overlapsWithArea(this)
+        allCornerPoints.any { rectangle.includes(it) }
+            || rectangle.allCornerPoints.any { includes(it) }
 
 
     fun includes(point: Point) : Boolean =
