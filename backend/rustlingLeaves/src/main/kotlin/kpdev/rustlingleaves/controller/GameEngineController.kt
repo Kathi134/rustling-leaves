@@ -22,6 +22,10 @@ class GameEngineController(
     fun rollDice(@PathVariable id: UUID, @PathVariable roundId: Int) : PairedDiceResult =
         gameEngineService.rollDiceForRound(id, roundId)
 
+    @GetMapping("{id}/rounds")
+    fun getCurrentRound(@PathVariable id: UUID) : Int =
+        gameEngineService.getCurrentRound(id)
+
     @GetMapping("/{id}/players/{playerId}/card")
     fun getPlayerCardDetails(@PathVariable id: UUID, @PathVariable playerId : UUID) : PlayerCardDetailedDtoResponse =
         gameEngineService.getPlayerCardDetails(id, playerId).toDetailedDto()

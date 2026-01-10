@@ -10,10 +10,15 @@ export const events = {
     AREA_INVALID: "AREA_INVALID",
     TYPE_VALID: "TYPE_VALID",
     TYPE_INVALID: "TYPE_INVALID",
-    CONFIRMED: "CONFIRMED"
+    CONFIRMED: "CONFIRMED",
+    NEW_ROUND_STARTED: 5
 }
 
 export function actionReducer(state, event) {
+    if(event === events.NEW_ROUND_STARTED) {
+        return actions.DRAW;
+    }
+    
     switch (state) {
         case actions.DRAW:
             if (event === events.AREA_VALID) 

@@ -4,7 +4,9 @@ import { useParams } from "react-router-dom";
 import { useLocalStorage } from "../shared/hooks/useLocalStorage";
 import PlayerComponent from "./PlayerComponent";
 import DiceComponent from "./DiceComponent";
-import { storePlayerMove, getPlayerCard } from "../shared/apiServices/gameService";
+import { storePlayerMove, getPlayerCard, getRound, quitGame } from "../shared/apiServices/gameService";
+import StopComponent from "./StopComponent";
+
 
 export default function GamePage() {
     const { lobbyId } = useParams();
@@ -17,15 +19,15 @@ export default function GamePage() {
     const [diceResults, setDiceResults] = useState([]);
 
     const [round, setRound] = useState(0); // todo: potentially in game object retrievbar
+    const [pendingContinueAnswer, setPendingContinueAnswer] = useState(true)
+    const [continueGame, setContinueGame] = useState(false);
  
     useEffect(() => {
-        if(gameId && playerId)
+        if(gameId && playerId) {
+            getRound(gameId).then(setRound)
             getPlayerCard(gameId, playerId).then(setPlayerCard)
+        }
     }, [gameId, playerId])
-
-    // const [cards, setCards] = useState([]);
-    // const [scores, setScores] = useState([]);
-
 
     useEffect(() => {
         if (!lobbyId)
@@ -36,6 +38,19 @@ export default function GamePage() {
                 setPlayerName(data.members.find(m => m.playerId === playerId)?.name)
             })
     }, [lobbyId, playerId]);
+
+    useEffect(() => {
+        setPendingContinueAnswer(true)
+    }, [round])
+
+    const handleStopAnswer = useCallback(stop => {
+        setPendingContinueAnswer(false)
+        setContinueGame(!stop)
+        if(stop) {
+            quitGame(gameId, playerId, round)
+                .then(setPlayerCard)
+        } 
+    }, [setPendingContinueAnswer, setContinueGame, setPlayerCard, gameId, playerId, round])
 
 
     const handleSaveClick = useCallback((area, type) => {
@@ -52,9 +67,13 @@ export default function GamePage() {
 
     return(<>
         <h2>GAME {gameId}</h2>
-        <DiceComponent gameId={gameId} onDiceRolled={setDiceResults} roundId={round} />
-        <PlayerComponent playerId={playerId} playerName={playerName} gameId={gameId}
-            card={playerCard} diceResults={diceResults} onSave={handleSaveClick} />
+        {pendingContinueAnswer
+            ? <StopComponent onAnswer={handleStopAnswer} />
+            : <DiceComponent gameId={gameId} onDiceRolled={setDiceResults} roundId={round} />
+        }
+        <PlayerComponent playerId={playerId} playerName={playerName} gameId={gameId} globalRound={round}
+            card={playerCard} diceResults={diceResults} onSave={handleSaveClick} clickEventsEnabled={continueGame} />
     </>
     )
 }
+

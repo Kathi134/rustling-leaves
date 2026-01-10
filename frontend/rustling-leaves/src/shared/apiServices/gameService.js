@@ -8,6 +8,14 @@ export async function getPlayerCard(gameId, playerId) {
         .then(r => r.json())
 }
 
+export async function getRound(gameId) {
+    return fetch(`${API_URL}/games/${gameId}/rounds`, {
+            method: "GET",
+            headers: { "Accept": "application/json" }
+        })
+        .then(r => r.json())
+}
+
 export async function rollDiceForRound(gameId, roundId) {
     return fetch(`${API_URL}/games/${gameId}/rounds/${roundId}/dice`, {
             method: "PUT",

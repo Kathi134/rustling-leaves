@@ -11,6 +11,15 @@ export default function useRectangleDrawing({ gameId, playerId, card, diceValues
 
     useEffect(() => setDimensions(diceValues), [diceValues, setDimensions])
 
+    const unset = useCallback(() => {
+        console.log("foo")
+        setRectangle()
+        setAllowed(true)
+        setHints([])
+        setAllowedTypes()
+        setDimensions()
+    }, [])
+
     const draw = useCallback((point, currDimensions=dimensions) => {
         if(card?.boardTemplate === undefined || currDimensions === undefined)
             return;
@@ -47,5 +56,5 @@ export default function useRectangleDrawing({ gameId, playerId, card, diceValues
         }
     }, [dimensions, onRotated, draw])
 
-    return { pendingRectangle, pendingRectangleAllowed, hints, allowedTypes, draw, rotate };
+    return { pendingRectangle, pendingRectangleAllowed, hints, allowedTypes, draw, rotate, unset };
 }

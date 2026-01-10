@@ -37,6 +37,9 @@ class GameEngineService(
     fun getGameEngine(id: UUID) : GameEngine =
         gameEngineRepository.getReferenceById(id)
 
+    fun getCurrentRound(id: UUID): Int =
+        getGameEngine(id).currentRoundId
+
     fun rollDiceForRound(id: UUID, roundId: Int) : PairedDiceResult {
         val ge = getGameEngine(id)
         val res = ge.rollDice()
@@ -103,5 +106,7 @@ class GameEngineService(
 
     fun getPlayerCardDetails(id: UUID, playerId: UUID): PlayerCard =
         playerService.getPlayer(playerId).playerCard
+
+
 
 }
