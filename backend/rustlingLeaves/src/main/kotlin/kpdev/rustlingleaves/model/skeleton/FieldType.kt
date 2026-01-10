@@ -23,7 +23,7 @@ enum class FieldType(
     BEE(BeeAndFlowerScoreStrategy()),
     BUTTERFLY(EvenFactoringScoreStrategy(2)),
     BIRD_LEFT, // FactoringPairWithTypeStrategy(5, BIRD_RIGHT)
-    BIRD_RIGHT(FactoringPairWithTypeStrategy(5, BIRD_LEFT)),
+    BIRD_RIGHT(FactoringPairWithTypeStrategy(5, BIRD_LEFT), tickGroup = TickGroup(BIRD_LEFT)),
     RAINBOW(AllTickedScoreStrategy(30)),
     SEED(SeedAndCloudScoreStrategy()),
     BEAR(AreaInclusionScoreStrategy(false, 3), NotTickableCondition()),

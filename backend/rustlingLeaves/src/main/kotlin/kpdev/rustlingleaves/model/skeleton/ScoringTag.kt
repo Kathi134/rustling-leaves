@@ -35,5 +35,9 @@ class ScoringTag(
 }
 
 operator fun Set<ScoringTag>.get(tickedFieldType: FieldType) : ScoringTag {
-    return this.first { it.fieldType == tickedFieldType }
+    return try {
+        this.first { it.fieldType == tickedFieldType }
+    } catch (_: NoSuchElementException) {
+        this.first { it.fieldType in tickedFieldType.tickGroup }
+    }
 }
