@@ -22,12 +22,8 @@ table {
     opacity: 0.9;
     background: transparent;
 }
-.included.ticked::after {
-    color: var(--dark-highlight);
-}
-.highlighted.ticked::after {
-    color: var(--primary-highlight);
-}
+.included.ticked::after { color: var(--dark-highlight); }
+.highlighted.ticked::after { color: var(--primary-highlight); }
 
 /* backend stored rectangles */
 .included {
@@ -38,6 +34,7 @@ table {
     position: absolute;
     inset: 0;
     background-color: var(--dark-highlight);
+    opacity: 0.5;
     pointer-events: none;
 }
 .included.border-top { border-top: 2px solid var(--dark-highlight); }
