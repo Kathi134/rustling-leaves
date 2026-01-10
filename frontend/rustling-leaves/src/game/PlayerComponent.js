@@ -13,22 +13,20 @@ import ActionPanel from "./Board/FieldMatrix/ActionPanel";
 export default function PlayerComponent({ playerId, playerName, gameId, card, diceResults, onSave }) {
     const [action, dispatchAction] = useReducer(actionReducer, actions.DRAW);
 
+     // reset if rotated or falsely drawn
+    const [resetCounter, setResetCounter] = useState(0);
+    const resetUnsetEvent = useCallback(() => setResetCounter(0), [setResetCounter]);
+    const onRotated = useCallback(() => setResetCounter(c => c+1), [setResetCounter]);
+    useEffect(() => setResetCounter(c => (action === actions.DRAW) ? c+1 : 0), [action])
+
+
     // draw
     const diceValues = useMemo(() => diceResults ? diceResults.map(getOptionValue) : [], [diceResults]);
 
     const onDrawn = (success) => dispatchAction(success ? events.AREA_VALID : events.AREA_INVALID)
-    const { pendingRectangle, pendingRectangleAllowed, hints, allowedTypes, rotatedRectangle, draw, rotate } =
-        useRectangleDrawing({gameId, playerId, card, diceValues, onDrawn})
+    const { pendingRectangle, pendingRectangleAllowed, hints, allowedTypes, draw, rotate } =
+        useRectangleDrawing({gameId, playerId, card, diceValues, onDrawn, onRotated})
 
-
-    // reset if rotated or falsely drawn
-    const [resetCounter, setResetCounter] = useState(0);
-    const resetUnsetEvent = useCallback(() => setResetCounter(0), [setResetCounter]);
-    useEffect(() => {
-        setResetCounter(c => (action === actions.DRAW || rotatedRectangle) ? c+1 : 0);
-    }, [action, rotatedRectangle]);
-
-    useEffect(() => console.log(resetCounter, action), [resetCounter, action]);
 
     // tick
     const onTicked = (success) => dispatchAction(success ? events.TYPE_VALID : events.TYPE_INVALID)

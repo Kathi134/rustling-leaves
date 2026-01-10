@@ -14,7 +14,6 @@ export default function useTickType({gameId, playerId, card, area, allowedTypes,
 
     useEffect(() => {
         if(unset > 0) {
-            console.log("unse")
             unsetTickedType();
             resetUnsetEvent();
         }
