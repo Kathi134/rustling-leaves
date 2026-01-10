@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { getPlayerCard } from "../shared/apiServices/gameService";
 import FieldMatrix from "./Board/FieldMatrix/FieldMatrix";
 import ScoringTags from "./Board/ScoringTags/ScoringTags";
 import { getOptionValue } from "../shared/model/diceUtils";
@@ -11,28 +10,33 @@ import { containsPoint } from "../shared/model/areaUtils";
 import ActionPanel from "./Board/FieldMatrix/ActionPanel";
 
 
-export default function PlayerComponent({ playerId, playerName, gameId, diceResults }) {
-    const [card, setCard] = useState();
+export default function PlayerComponent({ playerId, playerName, gameId, card, diceResults, onSave }) {
     const [action, dispatchAction] = useReducer(actionReducer, actions.DRAW);
 
-
-    useEffect(() => {
-        if(gameId && playerId)
-            getPlayerCard(gameId, playerId).then(setCard)
-    }, [gameId, playerId])
-    
-
+    // draw
     const diceValues = useMemo(() => diceResults ? diceResults.map(getOptionValue) : [], [diceResults]);
 
     const onDrawn = (success) => dispatchAction(success ? events.AREA_VALID : events.AREA_INVALID)
+    const { pendingRectangle, pendingRectangleAllowed, hints, allowedTypes, rotatedRectangle, draw, rotate } =
+        useRectangleDrawing({gameId, playerId, card, diceValues, onDrawn})
+
+
+    // reset if rotated or falsely drawn
+    const [resetCounter, setResetCounter] = useState(0);
+    const resetUnsetEvent = useCallback(() => setResetCounter(0), [setResetCounter]);
+    useEffect(() => {
+        setResetCounter(c => (action === actions.DRAW || rotatedRectangle) ? c+1 : 0);
+    }, [action, rotatedRectangle]);
+
+    useEffect(() => console.log(resetCounter, action), [resetCounter, action]);
+
+    // tick
     const onTicked = (success) => dispatchAction(success ? events.TYPE_VALID : events.TYPE_INVALID)
-
-    const { pendingRectangle, pendingRectangleAllowed, hints, allowedTypes, draw } 
-        = useRectangleDrawing({gameId, playerId, card, diceValues, onDrawn})
-    const { tickedType, tickedPoints, tickError, tick } 
-        = useTickType({gameId, playerId, card, area: pendingRectangle, allowedTypes, onTicked, unset: action === actions.DRAW})
+    const { tickedType, tickedPoints, tickError, tick } = 
+        useTickType({gameId, playerId, card, area: pendingRectangle, allowedTypes, onTicked, unset: resetCounter, resetUnsetEvent })
    
-
+    
+    // handle cell click according to state
     const tickIfInArea = useCallback((point) => 
         containsPoint(pendingRectangle, point) ? tick(point) : draw(point)
     , [tick, draw, pendingRectangle])
@@ -44,15 +48,15 @@ export default function PlayerComponent({ playerId, playerName, gameId, diceResu
             return tickIfInArea
     }, [action, draw, tickIfInArea]);
 
-    
 
     return (
         <div className="vertical-container center">
             <h3>{playerName}s Spiel-Karte</h3>
-            
+
             <ActionPanel action={action} diceValues={diceValues}
-                drawHints={hints} pendingRectangleAllowed={pendingRectangleAllowed} 
-                tickError={tickError} />
+                drawHints={hints} pendingRectangleAllowed={pendingRectangleAllowed} onRotateRectangle={() => rotate(pendingRectangle?.topLeft)}
+                tickError={tickError}
+                onSave={() => onSave(pendingRectangle, tickedType)} />
 
             {card &&  <>
                 <FieldMatrix board={card.boardTemplate} onCellClick={onCellClick} areas={card.areas}

@@ -27,7 +27,7 @@ class GameEngine(
     private val players: Set<Player> =
         config.map { it.member.playerObject!! }.toSet(),
 
-    @OneToOne(cascade = [CascadeType.ALL], optional = false)
+    @OneToOne(cascade = [CascadeType.ALL], optional = false, orphanRemoval = true)
     @JoinColumn(name = "dice_id")
     private val dice: Dice = Dice(),
 

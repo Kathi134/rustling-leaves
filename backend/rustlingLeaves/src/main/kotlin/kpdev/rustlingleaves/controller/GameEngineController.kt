@@ -42,8 +42,8 @@ class GameEngineController(
     fun storeMoveForPlayer(
         @PathVariable id: UUID, @PathVariable playerId: UUID,
         @RequestBody moveDtoRequest: StoreMoveDtoRequest
-    ): PlayerCardDtoResponse =
-        gameEngineService.storeMoveForPlayer(id, playerId, moveDtoRequest).toDto()
+    ): PlayerCardDetailedDtoResponse =
+        gameEngineService.storeMoveForPlayer(id, playerId, moveDtoRequest).toDetailedDto()
 
     @PostMapping("/{id}/players/{playerId}/stop")
     fun quitGameForPlayer(

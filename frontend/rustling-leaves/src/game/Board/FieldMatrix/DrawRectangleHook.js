@@ -1,19 +1,24 @@
 import { getTickableFieldTypes, isAreaValid } from "../../../shared/apiServices/gameService";
 import { createAreaFromTopLeftAndDimensions } from "../../../shared/model/areaUtils";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 export default function useRectangleDrawing({ gameId, playerId, card, diceValues, onDrawn }) {
     const [pendingRectangle, setRectangle] = useState();
     const [pendingRectangleAllowed, setAllowed] = useState(true);
     const [hints, setHints] = useState([]);
     const [allowedTypes, setAllowedTypes] = useState();
+    const [dimensions, setDimensions] = useState();
+    const [rotatedRectangle, setRotatedRectangle] = useState(false);
 
-    const draw = useCallback((point) => {
-        if(card?.boardTemplate === undefined || diceValues === undefined)
+    useEffect(() => setDimensions(diceValues), [diceValues, setDimensions])
+
+    const draw = useCallback((point, currDimensions=dimensions) => {
+        if(card?.boardTemplate === undefined || currDimensions === undefined)
             return;
 
-        const area = createAreaFromTopLeftAndDimensions(point, card.boardTemplate, diceValues);
+        const area = createAreaFromTopLeftAndDimensions(point, card.boardTemplate, currDimensions);
         setRectangle(area);
+        setRotatedRectangle(false);
 
         isAreaValid(gameId, playerId, area.topLeft, area.bottomRight)
             .then(isValid => {
@@ -30,7 +35,20 @@ export default function useRectangleDrawing({ gameId, playerId, card, diceValues
                     onDrawn(false);
                 }
             })
-    }, [card, diceValues, gameId, playerId, onDrawn]);
+    }, [card, dimensions, gameId, playerId, onDrawn]);
 
-    return { pendingRectangle, pendingRectangleAllowed, hints, allowedTypes, draw };
+    const rotate = useCallback((point) => {
+        if(!dimensions || dimensions?.length < 2)
+            return
+        
+        setRotatedRectangle(false);
+        const newDims = [dimensions[1], dimensions[0]];
+        setDimensions(newDims);
+        if(point) {
+            draw(point, newDims)
+            setRotatedRectangle(true);
+        }
+    }, [dimensions, draw])
+
+    return { pendingRectangle, pendingRectangleAllowed, rotatedRectangle, hints, allowedTypes, draw, rotate };
 }

@@ -19,7 +19,7 @@ class Lobby(
 
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
-    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval=true)
     @JoinColumn(name = "lobby_id")
     val members: MutableList<LobbyMember> = mutableListOf(),
 
