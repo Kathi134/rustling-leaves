@@ -78,7 +78,7 @@ class GameEngine(
             player.stop()
 
         card.storeMove(area, tickedFieldType, currentRoundId)
-        if(players.all { it.numberOfRoundsPlayed == currentRoundId })
+        if(players.all { it.numberOfRoundsPlayed >= currentRoundId })
             currentRoundId++
         return card
     }
