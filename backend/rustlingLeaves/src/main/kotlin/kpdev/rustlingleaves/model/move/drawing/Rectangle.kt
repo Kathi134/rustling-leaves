@@ -38,18 +38,21 @@ class Rectangle(
         get() =
             setOf(topLeft, bottomRight, Point(bottomRight.x, topLeft.y),  Point(topLeft.x, bottomRight.y))
 
-
     fun isAdjacentToRectangle(rectangle: Rectangle) : Boolean {
         // x is adjacent
         if(topLeft.x == rectangle.bottomRight.x + 1
             || bottomRight.x == rectangle.topLeft.x - 1)
             if(rectangle.topLeft.y in topLeft.y..bottomRight.y
-                || rectangle.bottomRight.y in topLeft.y..bottomRight.y)
+                || rectangle.bottomRight.y in topLeft.y..bottomRight.y
+                || topLeft.y in rectangle.topLeft.y..rectangle.bottomRight.y
+                || bottomRight.y in rectangle.topLeft.y..rectangle.bottomRight.y)
                 return true
         if(topLeft.y == rectangle.bottomRight.y + 1
            || bottomRight.y == rectangle.topLeft.y - 1)
             if(rectangle.topLeft.x in topLeft.x..bottomRight.x
-                || rectangle.bottomRight.x in topLeft.x..bottomRight.x)
+                || rectangle.bottomRight.x in topLeft.x..bottomRight.x
+                || topLeft.x in rectangle.topLeft.x..rectangle.bottomRight.x
+                || bottomRight.x in rectangle.topLeft.x..rectangle.bottomRight.x)
                 return true
         return false
     }
