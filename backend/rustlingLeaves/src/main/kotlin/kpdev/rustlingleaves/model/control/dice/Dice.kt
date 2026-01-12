@@ -10,31 +10,20 @@ class Dice(
 
     @ElementCollection
     @CollectionTable(
-        name = "dice_roll_results_white",
+        name = "dice_roll_results",
         joinColumns = [JoinColumn(name = "dice_id")]
     )
     @MapKeyColumn(name = "round_id")
     @Column(name = "result")
     @Enumerated(EnumType.STRING)
-    val rollResultsWhiteDice : MutableMap<Int, DiceResult> = mutableMapOf(),
-
-    @ElementCollection
-    @CollectionTable(
-        name = "dice_roll_results_green",
-        joinColumns = [JoinColumn(name = "dice_id")]
-    )
-    @MapKeyColumn(name = "round_id")
-    @Column(name = "result")
-    @Enumerated(EnumType.STRING)
-    val rollResultsGreenDice : MutableMap<Int, DiceResult> = mutableMapOf(),
+    val rollResults : MutableMap<Int, DiceResult> = mutableMapOf(),
 ) {
 
-    fun roll(roundId : Int): PairedDiceResult =
-        PairedDiceResult(
-            white = rollResultsWhiteDice.computeIfAbsent(roundId) { DiceResult.entries.random() },
-            green = rollResultsGreenDice.computeIfAbsent(roundId) { DiceResult.entries.random() }
-        )
+    @Synchronized
+    fun roll(roundId: Int): DiceResult =
+        rollResults.getOrPut(roundId) { DiceResult.entries.random() }
 
     fun isDiceForRoundNew(roundId : Int) : Boolean =
-        rollResultsGreenDice.containsKey(roundId) && rollResultsWhiteDice.containsKey(roundId)
+        rollResults.containsKey(roundId)
 }
+

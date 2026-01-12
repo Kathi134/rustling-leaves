@@ -1,5 +1,6 @@
 package kpdev.rustlingleaves.service
 
+import jakarta.transaction.Transactional
 import kpdev.rustlingleaves.dto.move.QuitGameDtoRequest
 import kpdev.rustlingleaves.dto.move.StoreMoveDtoRequest
 import kpdev.rustlingleaves.dto.skeleton.asEntity
@@ -35,15 +36,15 @@ class GameEngineService(
         "/topic/game/$gameId/dice"
 
     fun getGameEngine(id: UUID) : GameEngine =
-        gameEngineRepository.getReferenceById(id)
+        gameEngineRepository.findById(id).orElseThrow()
 
     fun getCurrentRound(id: UUID): Int =
-        getGameEngine(id).currentRoundId
+        getGameEngine(id).currentRoundId()
 
+    @Transactional
     fun rollDiceForRound(id: UUID, roundId: Int) : PairedDiceResult {
-        val ge = getGameEngine(id)
-        val res = ge.rollDice()
-        gameEngineRepository.save(ge)
+        val ge = gameEngineRepository.findByIdForUpdate(id)
+        val res = ge.rollDice(roundId)
         socket.convertAndSend(diceSocketDest(ge.id), res)
         return res
     }

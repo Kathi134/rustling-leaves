@@ -28,21 +28,28 @@ class GameEngine(
         config.map { it.member.playerObject!! }.toSet(),
 
     @OneToOne(cascade = [CascadeType.ALL], optional = false, orphanRemoval = true)
-    @JoinColumn(name = "dice_id")
-    private val dice: Dice = Dice(),
+    @JoinColumn(name = "green_dice_id")
+    private val greenDice: Dice = Dice(),
+
+    @OneToOne(cascade = [CascadeType.ALL], optional = false, orphanRemoval = true)
+    @JoinColumn(name = "white_dice_id")
+    private val whiteDice: Dice = Dice(),
 
     private var currentRoundId: Int = 0,
 ) {
     val isFinished : Boolean
         get() = players.all { it.hasStopped }
 
-//    fun isNewRollForRoundAvailable() : Boolean =
-//        dice.isDiceForRoundNew(currentRoundId)
+    fun currentRoundId(): Int =
+        currentRoundId
 
-    fun rollDice() : PairedDiceResult {
+//    fun isNewRollForRoundAvailable() : Boolean =
+//        whiteDice.isDiceForRoundNew(currentRoundId) && greenDice.isDiceForRoundNew(currentRoundId)
+
+    fun rollDice(roundId: Int) : PairedDiceResult {
         players.forEach { it.cleanUpDiceEvents() }
-        val res = dice.roll(currentRoundId)
-        players.forEach { it.executeCallbackOnTrigger(res, currentRoundId) }
+        val res = PairedDiceResult(whiteDice.roll(roundId), greenDice.roll(roundId))
+        players.forEach { it.executeCallbackOnTrigger(res, roundId) }
         return res
     }
 
