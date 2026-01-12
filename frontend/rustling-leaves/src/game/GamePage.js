@@ -41,6 +41,7 @@ export default function GamePage() {
 
     useEffect(() => {
         setPendingContinueAnswer(true)
+        setContinueGame(false)
     }, [round])
 
     const handleStopAnswer = useCallback(stop => {
