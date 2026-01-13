@@ -55,11 +55,11 @@ class GameEngine(
 
     fun isDrawingAreaAllowed(player: Player, desiredArea: Area) : Boolean =
         player.playerCard
-            .drawConditions(currentRoundId)
+            .drawConditions()
             .all { cond -> cond.isDrawingAreaAllowed(desiredArea) }
 
     fun getReasonForDrawingAreaUnallowed(player: Player, desiredArea: Area) =
-        player.playerCard.drawConditions(currentRoundId)
+        player.playerCard.drawConditions()
             .filter { !it.isDrawingAreaAllowed(desiredArea) }
             .map { it::class.simpleName }
 

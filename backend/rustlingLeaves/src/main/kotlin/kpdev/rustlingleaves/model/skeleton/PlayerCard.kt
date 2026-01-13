@@ -53,7 +53,7 @@ class PlayerCard(
     val numberOfRoundsPlayed : Int
         get() = areas.size + scoringTags[FieldType.MISS].value
 
-    fun drawConditions(roundId: Int) : MutableSet<DrawCondition> {
+    fun drawConditions() : MutableSet<DrawCondition> {
         val set = mutableSetOf<DrawCondition>(RiverDrawCondition(season, this))
 
         if(areas.size == 0) {
