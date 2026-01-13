@@ -78,8 +78,9 @@ class GameEngine(
             return card
         if(!card.noMoveYetForRound(roundId))
             return card
-        if(!isDrawingAreaAllowed(player, area) || !getTickableFieldTypesInArea(area).contains(tickedFieldType))
-            return card
+        if(tickedFieldType != FieldType.MISS)
+            if(!isDrawingAreaAllowed(player, area) || !getTickableFieldTypesInArea(area).contains(tickedFieldType))
+                return card
 
         if(tickedFieldType == FieldType.MISS && player.playerCard.isSaturated())
             player.stop()

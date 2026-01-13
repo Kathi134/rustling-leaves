@@ -53,8 +53,12 @@ export default function PlayerComponent({ playerId, playerName, gameId, globalRo
             return tickIfInArea
     }, [action, draw, tickIfInArea, clickEventsEnabled]);
 
-    const onSaveClick = useCallback(() => {
-        onSave(pendingRectangle, tickedType)
+    const onSaveClick = useCallback((move) => {
+        if(move)
+            onSave(pendingRectangle, tickedType)
+        else
+            onSave()
+        
         dispatchAction(events.CONFIRMED)
         unsetRectangle(); 
     }, [unsetRectangle, onSave, pendingRectangle, tickedType])
@@ -70,12 +74,12 @@ export default function PlayerComponent({ playerId, playerName, gameId, globalRo
                     onSave={onSaveClick} />
             }
 
-            {card && <>
+            {card && <div className="horizontal-container gap-2 ">
                 <FieldMatrix board={card.boardTemplate} onCellClick={onCellClick} areas={card.areas}
                     pendingRectangle={pendingRectangle} pendingRectangleAllowed={pendingRectangleAllowed} 
                     tickedPoints={tickedPoints} tickedType={tickedType} />
                 <ScoringTags tags={card.scoringTags} />
-            </>}
+            </div>}
             <span>{card?.numberOfRoundsPlayed} gespielte Runde(n)</span>
             
         </div>

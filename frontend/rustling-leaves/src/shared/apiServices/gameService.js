@@ -77,6 +77,17 @@ export async function getPointsOfTypeInArea(gameId, playerId, rectangle, type) {
         .then(r => r.json())
 }
 
+async function sendStoreMoveRequest(gameId, playerId, body) {
+    return fetch(`${API_URL}/games/${gameId}/players/${playerId}/moves`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(body)
+        })
+        .then(r => r.json());
+}
 
 export async function storePlayerMove(gameId, playerId, roundId, topLeft, bottomRight, enumName) {
     const body = {
@@ -90,18 +101,23 @@ export async function storePlayerMove(gameId, playerId, roundId, topLeft, bottom
         }
     };
 
-    return fetch(`${API_URL}/games/${gameId}/players/${playerId}/moves`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            body: JSON.stringify(body)
-        })
-        .then(r => r.json());
+    return sendStoreMoveRequest(gameId, playerId, body)
 }
 
+export async function storePlayerMiss(gameId, playerId, roundId) {
+    const body = {
+        roundId,
+        rectangle: {
+            topLeft: {x:-1,y:-1},
+            bottomRight: {x:-1,y:-1}
+        },
+        type: {
+            enumName: "MISS"
+        }
+    };
 
+    return sendStoreMoveRequest(gameId, playerId, body)
+}
 
 
 export async function quitGame(gameId, playerId, roundId) {

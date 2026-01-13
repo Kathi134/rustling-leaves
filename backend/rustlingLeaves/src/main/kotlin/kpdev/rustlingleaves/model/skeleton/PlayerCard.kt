@@ -56,7 +56,7 @@ class PlayerCard(
     fun drawConditions(roundId: Int) : MutableSet<DrawCondition> {
         val set = mutableSetOf<DrawCondition>(RiverDrawCondition(season, this))
 
-        if(roundId == 0) {
+        if(areas.size == 0) {
             set.add(IncludeSinglePointDrawCondition(startingPoint,this))
         } else {
             set.add(AdjacentDrawCondition(this))
@@ -105,7 +105,7 @@ class PlayerCard(
             if(area.crossesRiver(boardTemplate.river))
                 scoringTags[FieldType.RIVER].inc(currentRoundId)
         } else {
-            scoringTags[FieldType.MISS].value.inc()
+            scoringTags[FieldType.MISS].inc(currentRoundId)
         }
     }
 

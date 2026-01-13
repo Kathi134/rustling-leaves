@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { useLocalStorage } from "../shared/hooks/useLocalStorage";
 import PlayerComponent from "./PlayerComponent";
 import DiceComponent from "./DiceComponent";
-import { storePlayerMove, getPlayerCard, getRound, quitGame } from "../shared/apiServices/gameService";
+import { storePlayerMove, storePlayerMiss, getPlayerCard, getRound, quitGame } from "../shared/apiServices/gameService";
 import StopComponent from "./StopComponent";
 
 
@@ -55,9 +55,14 @@ export default function GamePage() {
 
 
     const handleSaveClick = useCallback((area, type) => {
-        storePlayerMove(gameId, playerId, round, area.topLeft, area.bottomRight, type)
-            .then(setPlayerCard)
-            .then(() => setRound(r => r+1))
+        if(area && type)
+            storePlayerMove(gameId, playerId, round, area.topLeft, area.bottomRight, type)
+                .then(setPlayerCard)
+                .then(() => setRound(r => r+1))
+        else
+            storePlayerMiss(gameId, playerId, round)
+                .then(setPlayerCard)
+                .then(() => setRound(r => r+1))
     }, [gameId, playerId, round])
 
 
