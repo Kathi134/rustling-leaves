@@ -5,10 +5,8 @@ import kpdev.rustlingleaves.model.config.GameConfig
 import kpdev.rustlingleaves.model.control.Lobby
 import kpdev.rustlingleaves.model.control.LobbyMember
 import kpdev.rustlingleaves.model.control.LobbyState
-import kpdev.rustlingleaves.repository.GameEngineRepository
 import kpdev.rustlingleaves.repository.LobbyMemberRepository
 import kpdev.rustlingleaves.repository.LobbyRepository
-import kpdev.rustlingleaves.repository.PlayerRepository
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Service
 import java.util.*
@@ -16,10 +14,8 @@ import java.util.*
 @Service
 class LobbyService(
     private val lobbyRepository: LobbyRepository,
-    private val playerRepository: PlayerRepository,
     private val memberRepository: LobbyMemberRepository,
-    private val messagingTemplate: SimpMessagingTemplate,
-    private val gameEngineRepository: GameEngineRepository
+    private val messagingTemplate: SimpMessagingTemplate
 ) {
 
     fun getAllLobbies(): List<Lobby> =

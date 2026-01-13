@@ -1,12 +1,12 @@
 package kpdev.rustlingleaves.controller
 
 import kpdev.rustlingleaves.dto.PointsOfTypeInRectangleRequest
+import kpdev.rustlingleaves.dto.control.PlayerDetailedDtoResponse
+import kpdev.rustlingleaves.dto.control.toDetailedDto
 import kpdev.rustlingleaves.dto.move.QuitGameDtoRequest
 import kpdev.rustlingleaves.dto.move.StoreMoveDtoRequest
 import kpdev.rustlingleaves.dto.skeleton.*
-import kpdev.rustlingleaves.model.control.dice.DiceResult
 import kpdev.rustlingleaves.model.control.dice.PairedDiceResult
-import kpdev.rustlingleaves.model.move.drawing.Area
 import kpdev.rustlingleaves.model.move.drawing.Rectangle
 import kpdev.rustlingleaves.model.skeleton.Point
 import kpdev.rustlingleaves.service.GameEngineService
@@ -27,7 +27,7 @@ class GameEngineController(
         gameEngineService.getCurrentRound(id)
 
     @GetMapping("/{id}/players/{playerId}/card")
-    fun getPlayerCardDetails(@PathVariable id: UUID, @PathVariable playerId : UUID) : PlayerCardDetailedDtoResponse =
+    fun getPlayerCardDetails(@PathVariable id: UUID, @PathVariable playerId : UUID) : PlayerDetailedDtoResponse =
         gameEngineService.getPlayerCardDetails(id, playerId).toDetailedDto()
 
     @PostMapping("/{id}/players/{playerId}/areas/valid")
@@ -46,14 +46,14 @@ class GameEngineController(
     fun storeMoveForPlayer(
         @PathVariable id: UUID, @PathVariable playerId: UUID,
         @RequestBody moveDtoRequest: StoreMoveDtoRequest
-    ): PlayerCardDetailedDtoResponse =
+    ): PlayerDetailedDtoResponse =
         gameEngineService.storeMoveForPlayer(id, playerId, moveDtoRequest).toDetailedDto()
 
     @PostMapping("/{id}/players/{playerId}/stop")
     fun quitGameForPlayer(
         @PathVariable id: UUID, @PathVariable playerId: UUID,
         @RequestBody quitDtoRequest: QuitGameDtoRequest
-    ) : PlayerCardDtoResponse =
-        gameEngineService.quitGameForPlayer(id, playerId, quitDtoRequest).toDto()
+    ) : PlayerDetailedDtoResponse =
+        gameEngineService.quitGameForPlayer(id, playerId, quitDtoRequest).toDetailedDto()
 
 }

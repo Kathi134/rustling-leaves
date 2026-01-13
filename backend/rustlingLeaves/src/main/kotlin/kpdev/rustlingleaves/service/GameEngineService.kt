@@ -6,15 +6,12 @@ import kpdev.rustlingleaves.dto.move.StoreMoveDtoRequest
 import kpdev.rustlingleaves.dto.skeleton.asEntity
 import kpdev.rustlingleaves.model.control.GameEngine
 import kpdev.rustlingleaves.model.control.Player
-import kpdev.rustlingleaves.model.control.dice.DiceResult
 import kpdev.rustlingleaves.model.control.dice.PairedDiceResult
 import kpdev.rustlingleaves.model.move.drawing.Area
 import kpdev.rustlingleaves.model.move.drawing.Rectangle
 import kpdev.rustlingleaves.model.skeleton.FieldType
-import kpdev.rustlingleaves.model.skeleton.PlayerCard
 import kpdev.rustlingleaves.model.skeleton.Point
 import kpdev.rustlingleaves.repository.GameEngineRepository
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Service
 import java.util.*
@@ -73,7 +70,7 @@ class GameEngineService(
         return getGameEngine(id).getPointsOfFieldTypeInRectangle(player, type, rectangle)
     }
 
-    fun storeMoveForPlayer(id: UUID, playerId: UUID, moveDtoRequest: StoreMoveDtoRequest) : PlayerCard {
+    fun storeMoveForPlayer(id: UUID, playerId: UUID, moveDtoRequest: StoreMoveDtoRequest) : Player {
         val ge = getGameEngine(id)
         val player = playerService.getPlayer(playerId)
         val area = getAreaFromPlayerAndRectangle(player, moveDtoRequest.rectangle)
@@ -83,10 +80,10 @@ class GameEngineService(
 
         socket.convertAndSend(cardsSocketDest(ge.id, moveDtoRequest.roundId), resultingCard)
 
-        return resultingCard
+        return player
     }
 
-    fun quitGameForPlayer(id: UUID, playerId: UUID, quitDtoRequest: QuitGameDtoRequest): PlayerCard {
+    fun quitGameForPlayer(id: UUID, playerId: UUID, quitDtoRequest: QuitGameDtoRequest): Player {
         val ge = getGameEngine(id)
         val player = playerService.getPlayer(playerId)
 
@@ -96,7 +93,7 @@ class GameEngineService(
         socket.convertAndSend(cardsSocketDest(ge.id, quitDtoRequest.roundId), resultingCard)
         performEndActionsIfRequired(ge)
 
-        return resultingCard
+        return player
     }
 
     private fun performEndActionsIfRequired(game: GameEngine) {
@@ -105,8 +102,8 @@ class GameEngineService(
         socket.convertAndSend(scoresSocketDest(game.id), game.finalScoring)
     }
 
-    fun getPlayerCardDetails(id: UUID, playerId: UUID): PlayerCard =
-        playerService.getPlayer(playerId).playerCard
+    fun getPlayerCardDetails(id: UUID, playerId: UUID): Player =
+        playerService.getPlayer(playerId)
 
 
 

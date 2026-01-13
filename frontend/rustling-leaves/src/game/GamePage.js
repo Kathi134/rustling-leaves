@@ -68,9 +68,10 @@ export default function GamePage() {
 
     return(<>
         <h2>GAME {gameId}</h2>
-        {pendingContinueAnswer
-            ? <StopComponent onAnswer={handleStopAnswer} />
-            : <DiceComponent gameId={gameId} onDiceRolled={setDiceResults} roundId={round} />
+        {playerCard?.hasStopped
+            ? <div className="center">Du bist ausgestiegen. Warte auf die anderen für die Wertung.</div>
+            : pendingContinueAnswer ?  <StopComponent onAnswer={handleStopAnswer} />
+            : continueGame && <DiceComponent gameId={gameId} onDiceRolled={setDiceResults} roundId={round} />
         }
         <PlayerComponent playerId={playerId} playerName={playerName} gameId={gameId} globalRound={round}
             card={playerCard} diceResults={diceResults} onSave={handleSaveClick} clickEventsEnabled={continueGame} />
