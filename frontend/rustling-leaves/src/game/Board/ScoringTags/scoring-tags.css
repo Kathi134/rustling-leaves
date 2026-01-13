@@ -5,3 +5,42 @@
     width: 2em;
     height: 2rem;
 }
+.circle-container {
+    display: grid;
+    grid-template-columns: repeat(5, auto);
+    gap: 3px 4px; /* row gap, column gap */
+    align-items: center;
+}
+
+tr:nth-child(even) .circle {
+    background: var(--default-light);
+}
+
+.circle {
+    width: 10px;
+    height: 10px;
+    border: 1.5px solid var(--primary-highlight-light);
+    border-radius: 50%;
+    position: relative;
+    box-sizing: border-box;
+    background-color: var(--base);
+}
+
+.circle.crossed::before,
+.circle.crossed::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 1.5px;
+    background-color: var(--primary-highlight);
+}
+
+.circle.crossed::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.circle.crossed::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
