@@ -12,7 +12,6 @@ export default function useRectangleDrawing({ gameId, playerId, card, diceValues
     useEffect(() => setDimensions(diceValues), [diceValues, setDimensions])
 
     const unset = useCallback(() => {
-        console.log("foo")
         setRectangle()
         setAllowed(true)
         setHints([])

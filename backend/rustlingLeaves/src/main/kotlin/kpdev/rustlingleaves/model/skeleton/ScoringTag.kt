@@ -22,6 +22,8 @@ class ScoringTag(
         private set
 
     fun add(value: Int, currentRoundId: Int) : Boolean {
+        if(lastTickedRoundIndex == currentRoundId)
+            return false
         val preview = this.value + value
         if(preview > max)
             return false

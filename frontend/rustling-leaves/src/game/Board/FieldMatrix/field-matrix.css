@@ -22,13 +22,12 @@ table {
     opacity: 0.9;
     background: transparent;
 }
-.included.ticked::after { color: var(--dark-highlight); }
-.highlighted.ticked::after { color: var(--primary-highlight); }
 
 /* backend stored rectangles */
 .included {
     position: relative;
 }
+.included.ticked::after { color: var(--dark-highlight); }
 .included::after {
     content: "";
     position: absolute;
@@ -58,12 +57,17 @@ table {
 .highlighted.border-bottom { border-bottom: 2px solid var(--primary-highlight); }
 .highlighted.border-left { border-left: 2px solid var(--primary-highlight); }
 .highlighted.border-right { border-right: 2px solid var(--primary-highlight); }
+.highlighted.ticked::after { color: var(--primary-highlight); }
+
 
 .highlighted.not-allowed::after { background-color: var(--secondary-highlight); }
 .highlighted.not-allowed.border-top { border-top: 2px solid var(--secondary-highlight); }
 .highlighted.not-allowed.border-bottom { border-bottom: 2px solid var(--secondary-highlight); }
 .highlighted.not-allowed.border-left { border-left: 2px solid var(--secondary-highlight); }
 .highlighted.not-allowed.border-right { border-right: 2px solid var(--secondary-highlight); }
+.highlighted.not-allowed.ticked::after { color: var(--secondary-highlight); 
+    background: transparent;
+ }
 
 
 /* river borders */
